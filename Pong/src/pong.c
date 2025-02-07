@@ -82,7 +82,7 @@ void handle_input_pong(struct Pong* pong, ALLEGRO_KEYBOARD_STATE* state)
         {
             pong->player1.vy = 0;
         }
-        if (pong-> mode == 1 )
+        if (pong->mode == 1 )
         {
             
             if (pong->ball.vx >= 0 && pong->ball.x > TABLE_WIDTH / 2)
@@ -239,27 +239,7 @@ void update_pong(struct Pong* pong, double dt)
             {
                 pong->ball.vy = rand() % 140 + 10;
             }
-        }
-    // if (pong->ball.vx >= 0 && pong->ball.x > TABLE_WIDTH / 2)
-    // {
-    //     if ((pong->ball.y < pong->player2.y))
-    //     {
-    //         pong->player2.vy = -PADDLE_SPEED;
-    //     }
-    //     else if(pong->ball.y > pong->player2.y + PADDLE_HEIGHT)
-    //     {
-    //         pong->player2.vy = PADDLE_SPEED;
-    //     }
-    //     else
-    //     {
-    //         pong->player2.vy = 0;
-    //     }
-    // }
-    // else
-    // {
-    //     pong->player2.vy = 0;
-    // }    
-        
+        }  
     }
 }
 
