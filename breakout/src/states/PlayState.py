@@ -51,12 +51,23 @@ class PlayState(BaseState):
             ball.update(dt)
             ball.solve_world_boundaries()
 
+            if ball.stuck:
+                ball.x = self.paddle.x + ball.offset_x
+                ball.y = self.paddle.y - ball.height
+
             # Check collision with the paddle
             if ball.collides(self.paddle):
-                settings.SOUNDS["paddle_hit"].stop()
-                settings.SOUNDS["paddle_hit"].play()
-                ball.rebound(self.paddle)
-                ball.push(self.paddle)
+                if self.paddle.sticky and not ball.stuck:
+                    ball.offset_x = ball.x - self.paddle.x  # Posición relativa
+                    ball.stuck = True
+                    ball.vx = ball.vy = 0
+                    self.paddle.sticky = False  # Solo una pelota se pega
+
+                elif not ball.stuck:
+                    settings.SOUNDS["paddle_hit"].stop()
+                    settings.SOUNDS["paddle_hit"].play()
+                    ball.rebound(self.paddle)
+                    ball.push(self.paddle)
 
             # Check collision with brickset
             if not ball.collides(self.brickset):
@@ -87,13 +98,19 @@ class PlayState(BaseState):
                 self.paddle.inc_size()
 
             # Chance to generate two more balls
-            if random.random() < 0.1:
+            if random.random() < 1:
                 r = brick.get_collision_rect()
+                if random.random() < 0.5:  # 50% para cada uno
+                    powerup_type = "TwoMoreBall"
+                else:
+                    powerup_type = "StickyPaddle"
+                
                 self.powerups.append(
-                    self.powerups_abstract_factory.get_factory("TwoMoreBall").create(
+                    self.powerups_abstract_factory.get_factory(powerup_type).create(
                         r.centerx - 8, r.centery - 8
                     )
                 )
+
 
         # Removing all balls that are not in play
         self.balls = [ball for ball in self.balls if ball.active]
@@ -182,6 +199,14 @@ class PlayState(BaseState):
             powerup.render(surface)
 
     def on_input(self, input_id: str, input_data: InputData) -> None:
+        if input_id == "enter":
+            for ball in self.balls:
+                if ball.stuck:
+                    # Lanzar con velocidad aleatoria No deberia ser aleatoria
+                    ball.vx = random.randint(-80, 80)
+                    ball.vy = random.randint(-170, -100)
+                    ball.stuck = False
+        
         if input_id == "move_left":
             if input_data.pressed:
                 self.paddle.vx = -settings.PADDLE_SPEED

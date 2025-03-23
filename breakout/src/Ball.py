@@ -30,6 +30,8 @@ class Ball:
         self.texture = settings.TEXTURES["spritesheet"]
         self.frame = random.randint(0, 6)
         self.active = True
+        self.stuck = False  # Indica si está pegada a la paleta
+        self.offset_x = 0  # Posición relativa a la paleta
 
     def get_collision_rect(self) -> pygame.Rect:
         return pygame.Rect(self.x, self.y, self.width, self.height)
