@@ -1,0 +1,5 @@
+# Ignorar la carpeta de dependencias
+venv/
+
+# Ignorar archivos de entorno
+.env
