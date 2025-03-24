@@ -31,6 +31,7 @@ class PlayState(BaseState):
         self.brickset = params["brickset"]
         self.live_factor = params["live_factor"]
         self.points_to_next_live = params["points_to_next_live"]
+        self.powerup_timer = params.get("powerup_timer", 0)
         self.points_to_next_grow_up = (
             self.score
             + settings.PADDLE_GROW_UP_POINTS * (self.paddle.size + 1) * self.level
@@ -47,6 +48,12 @@ class PlayState(BaseState):
     def update(self, dt: float) -> None:
         self.paddle.update(dt)
 
+        if self.paddle.sticky:
+            self.powerup_timer += dt
+            if self.powerup_timer > 5:
+                self.paddle.sticky = False
+
+
         for ball in self.balls:
             ball.update(dt)
             ball.solve_world_boundaries()
@@ -55,13 +62,20 @@ class PlayState(BaseState):
                 ball.x = self.paddle.x + ball.offset_x
                 ball.y = self.paddle.y - ball.height
 
+                if not self.paddle.sticky:             
+            
+                    ball.vx = random.randint(-80, 80)
+                    ball.vy = random.randint(-170, -100)
+                    ball.stuck = False
+
+
             # Check collision with the paddle
             if ball.collides(self.paddle):
-                if self.paddle.sticky and not ball.stuck:
+                if self.paddle.sticky:
                     ball.offset_x = ball.x - self.paddle.x  # Posición relativa
                     ball.stuck = True
                     ball.vx = ball.vy = 0
-                    self.paddle.sticky = False  # Solo una pelota se pega
+                    #self.paddle.sticky = False  # Solo una pelota se pega
 
                 elif not ball.stuck:
                     settings.SOUNDS["paddle_hit"].stop()
@@ -228,5 +242,6 @@ class PlayState(BaseState):
                 brickset=self.brickset,
                 points_to_next_live=self.points_to_next_live,
                 live_factor=self.live_factor,
+                powerup_timer = self.powerup_timer,
                 powerups=self.powerups,
             )
