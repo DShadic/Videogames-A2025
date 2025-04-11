@@ -31,6 +31,9 @@ class PlayState(BaseState):
         self.brickset = params["brickset"]
         self.live_factor = params["live_factor"]
         self.points_to_next_live = params["points_to_next_live"]
+        self.powerup_timer = params.get("powerup_timer", 0)
+        self.score_timer = params.get("score_timer", 0)
+        self.score_multiplier = params.get("score_multiplier", 1)
         self.points_to_next_grow_up = (
             self.score
             + settings.PADDLE_GROW_UP_POINTS * (self.paddle.size + 1) * self.level
@@ -47,6 +50,17 @@ class PlayState(BaseState):
     def update(self, dt: float) -> None:
         self.paddle.update(dt)
 
+        if self.paddle.sticky:
+            self.powerup_timer += dt
+            if self.powerup_timer > 5:
+                self.paddle.sticky = False
+
+        if self.score_multiplier > 1:
+            self.score_timer += dt
+            if self.score_timer > 5:
+                self.score_multiplier = 1
+
+        
         for ball in self.balls:
             ball.update(dt)
             ball.solve_world_boundaries()
@@ -55,13 +69,20 @@ class PlayState(BaseState):
                 ball.x = self.paddle.x + ball.offset_x
                 ball.y = self.paddle.y - ball.height
 
+                if not self.paddle.sticky:             
+            
+                    ball.vx = random.randint(-80, 80)
+                    ball.vy = random.randint(-170, -100)
+                    ball.stuck = False
+
+
             # Check collision with the paddle
             if ball.collides(self.paddle):
-                if self.paddle.sticky and not ball.stuck:
+                if self.paddle.sticky:
                     ball.offset_x = ball.x - self.paddle.x  # Posición relativa
                     ball.stuck = True
                     ball.vx = ball.vy = 0
-                    self.paddle.sticky = False  # Solo una pelota se pega
+                    #self.paddle.sticky = False  # Solo una pelota se pega
 
                 elif not ball.stuck:
                     settings.SOUNDS["paddle_hit"].stop()
@@ -79,7 +100,7 @@ class PlayState(BaseState):
                 continue
 
             brick.hit()
-            self.score += brick.score()
+            self.score += brick.score() * self.score_multiplier
             ball.rebound(brick)
 
             # Check earn life
@@ -97,11 +118,14 @@ class PlayState(BaseState):
                 )
                 self.paddle.inc_size()
 
-            # Chance to generate two more balls
-            if random.random() < 1:
+            # Chance to generate a powerup
+            if random.random() < 0.5:
                 r = brick.get_collision_rect()
-                if random.random() < 0.5:  # 50% para cada uno
+                if random.random() < 0.33:  #33 % para cada powerup
                     powerup_type = "TwoMoreBall"
+
+                elif random.random() < 0.33:
+                    powerup_type = "ScoreMultiplier"
                 else:
                     powerup_type = "StickyPaddle"
                 
@@ -179,6 +203,15 @@ class PlayState(BaseState):
             heart_x += 11
             i += 1
 
+        if self.score_multiplier > 1:
+            render_text(
+                surface,
+                f"Score Multiplier: x{self.score_multiplier}",
+                settings.FONTS["tiny"],
+                settings.VIRTUAL_WIDTH / 2 -6.9,
+                5,
+                (255, 255, 255),
+            )
         render_text(
             surface,
             f"Score: {self.score}",
@@ -228,5 +261,8 @@ class PlayState(BaseState):
                 brickset=self.brickset,
                 points_to_next_live=self.points_to_next_live,
                 live_factor=self.live_factor,
+                powerup_timer = self.powerup_timer,
+                score_multiplier = self.score_multiplier,
+                score_timer = self.score_timer,
                 powerups=self.powerups,
             )

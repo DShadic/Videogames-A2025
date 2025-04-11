@@ -11,5 +11,6 @@ This module contains all of the power ups.
 from src.powerups.PowerUp import PowerUp
 from src.powerups.TwoMoreBall import TwoMoreBall
 from src.powerups.StickyPaddle import StickyPaddle
+from src.powerups.Multiplier import ScoreMultiplier
 
-(PowerUp, TwoMoreBall, StickyPaddle)
+(PowerUp, TwoMoreBall, StickyPaddle, ScoreMultiplier)

@@ -18,4 +18,5 @@ class StickyPaddle(PowerUp):
     def take(self, play_state: TypeVar("PlayState")) -> None:
         play_state.paddle.sticky = True  # Activa el modo "pegajoso"
 
+        play_state.powerup_timer = 0
         self.active = False
