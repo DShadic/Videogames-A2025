@@ -1,12 +1,12 @@
-#include "boy.hpp"
+#include "girl.hpp"
 
-Boy::Boy() :
+Girl::Girl() :
     animationSpeed(0.1f),   // 0.1 segundos por frame
     currentTime(0.0f),
     currentFrame(0),
-    frameWidth(32),         // Ancho de cada frame
-    frameHeight(32),        // Altura de cada frame 
-    totalFrames(4),
+    frameWidth(48),         // Ancho de cada frame
+    frameHeight(64),        // Altura de cada frame 
+    totalFrames(8),
     currentRow(0),           // Fila inicial
     isMoving(false),
     idleRow(0),              // Fila de animación cuando está quieto
@@ -15,7 +15,7 @@ Boy::Boy() :
 }
 
 // Carga la textura del spritesheet
-bool Boy::loadTexture(const std::string& filename) {
+bool Girl::loadTexture(const std::string& filename) {
     if (!texture.loadFromFile(filename)) {
         return false;
     }
@@ -30,16 +30,16 @@ bool Boy::loadTexture(const std::string& filename) {
 }
 
 // Establece la posición del personaje
-void Boy::setPosition(float x, float y) {
+void Girl::setPosition(float x, float y) {
     sprite.setPosition(x, y);
 }
 
 // Obtiene la posición actual
-sf::Vector2f Boy::getPosition() const {
+sf::Vector2f Girl::getPosition() const {
     return sprite.getPosition();
 }
 
-void Boy::setAnimationRow(int row) {
+void Girl::setAnimationRow(int row) {
     if(row != currentRow) {
         lastMovementRow = row;  // Guardar última dirección
         currentRow = row;
@@ -49,22 +49,22 @@ void Boy::setAnimationRow(int row) {
 }
 
 // Dibuja el sprite en la ventana
-void Boy::draw(sf::RenderWindow& window) {
+void Girl::draw(sf::RenderWindow& window) {
     window.draw(sprite);
 }
 
 // Mueve al personaje
-void Boy::move(float offsetX, float offsetY) {
+void Girl::move(float offsetX, float offsetY) {
     sprite.move(offsetX, offsetY);
 }
 
-void Boy::stopMoving() {
+void Girl::stopMoving() {
     isMoving = false;
     currentFrame = 0;         // Reiniciar al primer frame de la animación
     currentRow = idleRow;     // Usar fila de animación idle
 }
 
-void Boy::update(float deltaTime) {
+void Girl::update(float deltaTime) {
     if (isMoving) {        
         currentTime += deltaTime;        
         if (currentTime >= animationSpeed) {

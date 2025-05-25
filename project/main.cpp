@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include "src/boy.hpp"
+#include "src/girl.hpp"
 
 int main() 
 {
@@ -72,17 +72,17 @@ int main()
     virtualScreen.display();
 
     // ===== 4. Configuración del personaje =====
-    Boy boy;
-    if (!boy.loadTexture("Textures/boyWalk.png")) {  // Ruta corregida
+    Girl girl;
+    if (!girl.loadTexture("Textures/girl.png")) {  // Ruta corregida
         std::cerr << "Error: Textura del personaje no cargada." << std::endl;
         return -1;
     }
-    boy.setPosition(mapWidth/2.0f, mapHeight/2.0f);  // Centro del mapa
+    girl.setPosition(mapWidth/2.0f, mapHeight/2.0f);  // Centro del mapa
 
     // ===== 5. Configuración de la cámara =====
     sf::View camera = window.getDefaultView();
     camera.setSize(800, 600);
-    camera.setCenter(boy.getPosition());
+    camera.setCenter(girl.getPosition());
 
     sf::Clock deltaClock;
 
@@ -107,31 +107,31 @@ int main()
         bool anyKeyPressed = false;
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-            boy.move(0, -speed);
-            boy.setAnimationRow(1);
+            girl.move(0, -speed);
+            girl.setAnimationRow(13);
             anyKeyPressed = true;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-            boy.move(0, speed);
-            boy.setAnimationRow(0);
+            girl.move(0, speed);
+            girl.setAnimationRow(18);
             anyKeyPressed = true;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            boy.move(-speed, 0);
-            boy.setAnimationRow(3);
+            girl.move(-speed, 0);
+            girl.setAnimationRow(7);
             anyKeyPressed = true;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            boy.move(speed, 0);
-            boy.setAnimationRow(2);
+            girl.move(speed, 0);
+            girl.setAnimationRow(11);
             anyKeyPressed = true;
         }
         if (!anyKeyPressed) {
-        boy.stopMoving();        
-        //boy.setAnimationRow(boy.getLastMovementRow());
+        girl.stopMoving();        
+        //girl.setAnimationRow(girl.getLastMovementRow());
         }
-        boy.update(deltaTime);  // Actualizar animación
-        camera.setCenter(boy.getPosition());  // Cámara sigue al personaje
+        girl.update(deltaTime);  // Actualizar animación
+        camera.setCenter(girl.getPosition());  // Cámara sigue al personaje
 
         // ===== Renderizado =====
         window.clear(sf::Color::Black);
@@ -142,7 +142,7 @@ int main()
         window.draw(mapSprite);
 
         // Dibujar personaje
-        boy.draw(window);
+        girl.draw(window);
 
         window.display();
     }

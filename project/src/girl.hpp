@@ -1,9 +1,9 @@
-#ifndef BOY_HPP
-#define BOY_HPP
+#ifndef GIRL_HPP
+#define GIRL_HPP
 
 #include <SFML/Graphics.hpp>
 
-class Boy {
+class Girl {
 private:
     sf::Sprite sprite;
     sf::Texture texture;    
@@ -21,7 +21,7 @@ private:
     
 
 public:
-    Boy();
+    Girl();
     
     bool loadTexture(const std::string& filename);
     void setPosition(float x, float y);
